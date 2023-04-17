@@ -28,6 +28,7 @@ body {
 	border-left: 1px solid #ddd;
 	border-right: 1px solid #ddd;
 	background: #fff;
+	overflow: hidden auto;
 }
 
 .join-screen .form {
@@ -178,3 +179,11 @@ body {
 	max-width: 100%;
 	border-radius: .5rem;
 }
+
+#pay-req {
+	position: fixed;
+	top: 0; left: 0;
+	height: 150vh;
+	background: white;
+}
+

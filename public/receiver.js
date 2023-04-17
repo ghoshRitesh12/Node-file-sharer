@@ -100,6 +100,8 @@
 			}, 100)
 		};
 
+		fileShare = {};
+
 	}
 
 
@@ -118,6 +120,11 @@
 	
 		document.querySelector('#pay-req').removeAttribute('hidden');
 		document.querySelector('#pay-req img').setAttribute('src', '../paymentQRCode.jpg');
+
+		e.target.closest('.item').style.pointerEvents = 'none';
+		e.target.closest('.item').style.backgroundColor = 'rgb(206, 206, 206)';
+
+		document.querySelector('.app').style.overflowY = 'hidden';
 	})
 
 
@@ -126,7 +133,7 @@
 		await printFile()
 		document.querySelector('#pay-req').setAttribute('hidden', '');
 		document.querySelector('#pay-req img').removeAttribute('src');
-
+		document.querySelector('.app').style.overflowY = 'auto';
 	})
 
 

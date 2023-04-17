@@ -10,8 +10,6 @@
 <body>
 	<div class="app">
 
-		<iframe frameborder="0"></iframe>
-
 		<div class="screen join-screen active">
 			<div class="form">
 				<h2>Share your files securely</h2>
@@ -29,30 +27,27 @@
 			<div class="files-list">
 				<div class="title">Shared files</div>
 			</div>
-
-
-			<form id="pay-req" hidden style="width: fit-content; margin-inline: auto; position: fixed; top: 0;">
-				<div style="position: absolute; top: 4.5%;">
-					Cost of each copy: <span> 2 Rs </span>,
-					Cost of
-					<span id="copies_no"></span>
-					copies is
-					<span id="copies_cost"></span> Rs
-				</div>
-
-				<img src="" alt="qr" style="max-width: 30rem">
-
-				<button
-					style="padding: .5rem .75rem; background-color: #333; color: white; border-radius: 2rem; font-weight: 500;"
-					type="submit"
-				>
-					Payment done? Proceed to print
-				</button>
-
-			</form>
-
-
 		</div>
+
+		<form id="pay-req" hidden>
+			<div style="position: absolute; top: 2%; margin-left: 2rem;">
+				Cost of each copy: <span> 2 Rs </span>,
+				Cost of
+				<span id="copies_no"></span>
+				copies is
+				<span id="copies_cost"></span> Rs
+			</div>
+
+			<img src="" alt="qr" style="max-width: 30rem">
+
+			<button
+				style="padding: .5rem .75rem; background-color: #333; color: white; border-radius: 2rem; font-weight: 500; margin-left: 2rem"
+				type="submit"
+			>
+				Payment done? Proceed to print
+			</button>
+
+		</form>
 
 	</div>
 
