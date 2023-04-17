@@ -11,7 +11,10 @@
 		let joinID = generateID();
 		document.querySelector("#join-id").innerHTML = `
 			<b>Room ID</b>
-			<span>${joinID}</span>
+			<span style="display: inline-block; margin-bottom: .5rem">${joinID}</span>
+			<span id="copy-id">
+				Copy ID
+			</span>
 		`;
 		socket.emit("sender-join", {
 			uid:joinID
@@ -36,14 +39,15 @@
 			let el = document.createElement("div");
 			el.classList.add("item");
 			el.innerHTML = `
-					<div class="progress">0%</div>
-					<div class="filename">${file.name}</div>
+				<div class="progress">0%</div>
+				<div class="filename">${file.name}</div>
 			`;
 			document.querySelector(".files-list").appendChild(el);
 			shareFile({
 				filename: file.name,
 				total_buffer_size:buffer.length,
 				buffer_size:1024,
+				file_type: file.type
 			}, buffer, el.querySelector(".progress"));
 		}
 		reader.readAsArrayBuffer(file);
@@ -59,7 +63,7 @@
 		socket.on("fs-share",function(){
 			let chunk = buffer.slice(0,metadata.buffer_size);
 			buffer = buffer.slice(metadata.buffer_size,buffer.length);
-			progress_node.innerText = Math.trunc(((metadata.total_buffer_size - buffer.length) / metadata.total_buffer_size * 100));
+			progress_node.innerText = Math.trunc(((metadata.total_buffer_size - buffer.length) / metadata.total_buffer_size * 100)) + "%";
 			if(chunk.length != 0){
 				socket.emit("file-raw", {
 					uid:receiverID,
@@ -70,4 +74,16 @@
 			}
 		});
 	}
+
+
+	document.addEventListener('click', async e => {
+		if(e.target.matches('#copy-id')) {
+			if(!document.querySelector('#join-id').innerText) return;
+			await navigator.clipboard.writeText(document.querySelector('#join-id span:nth-of-type(1)').innerText);
+			e.target.innerText = 'ID copied!';
+			setTimeout(() => e.target.innerText = 'Copy ID')
+
+		}	
+	})
+
 })();

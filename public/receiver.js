@@ -1,21 +1,39 @@
-(function(){
+(function () {
 
 	const socket = io();
 	let sender_uid;
 
-	function generateID(){
-		return `${Math.trunc(Math.random()*999)}-${Math.trunc(Math.random()*999)}-${Math.trunc(Math.random()*999)}`;
+	function globalEvl(type, selector, callback) {
+		document.addEventListener(type, e => { 
+			if(e.target.matches(selector)) callback(e) 
+		});
 	}
 
-	document.querySelector("#receiver-start-con-btn").addEventListener("click",function(){
+	const docMap = {
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+		'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx'
+	}
+
+
+	let fileCopies;
+
+	// cost of each printable copy
+	const eachCopyCost = 2;
+
+	function generateID() {
+		return `${Math.trunc(Math.random() * 999)}-${Math.trunc(Math.random() * 999)}-${Math.trunc(Math.random() * 999)}`;
+	}
+
+	document.querySelector("#receiver-start-con-btn").addEventListener("click", function () {
 		sender_uid = document.querySelector("#join-id").value;
-		if(sender_uid.length == 0){
+		if (sender_uid.length == 0) {
 			return;
 		}
 		let joinID = generateID();
 		socket.emit("receiver-join", {
-			sender_uid:sender_uid,
-			uid:joinID
+			sender_uid: sender_uid,
+			uid: joinID
 		});
 		document.querySelector(".join-screen").classList.remove("active");
 		document.querySelector(".fs-screen").classList.add("active");
@@ -23,7 +41,7 @@
 
 	let fileShare = {};
 
-	socket.on("fs-meta",function(metadata){
+	socket.on("fs-meta", function (metadata) {
 		fileShare.metadata = metadata;
 		fileShare.transmitted = 0;
 		fileShare.buffer = [];
@@ -31,32 +49,85 @@
 		let el = document.createElement("div");
 		el.classList.add("item");
 		el.innerHTML = `
-				<div class="progress">0%</div>
-				<div class="filename">${metadata.filename}</div>
+			<div class="progress">0%</div>
+			<div class="filename">${metadata.filename}</div>
+			<form class="print" hidden style="margin-top: 2rem">
+				<label style="display: block; margin-block: .5rem;">
+					Select no of copies to print
+				</label>
+				<input type="number" placeholder="no of copies" class="copies">
+				<button type="submit">
+					Continue
+				</button>
+			</form>
 		`;
 		document.querySelector(".files-list").appendChild(el);
 
 		fileShare.progrss_node = el.querySelector(".progress");
 
-		socket.emit("fs-start",{
-			uid:sender_uid
+		socket.emit("fs-start", {
+			uid: sender_uid
 		});
 	});
 
-	socket.on("fs-share",function(buffer){
-		console.log("Buffer", buffer);
+	socket.on("fs-share", function (buffer) {
 		fileShare.buffer.push(buffer);
 		fileShare.transmitted += buffer.byteLength;
-		fileShare.progrss_node.innerText = Math.trunc(fileShare.transmitted / fileShare.metadata.total_buffer_size * 100);
-		if(fileShare.transmitted == fileShare.metadata.total_buffer_size){
-			console.log("Download file: ", fileShare);
-			download(new Blob(fileShare.buffer), fileShare.metadata.filename);
-			fileShare = {};
+		fileShare.progrss_node.innerText = Math.trunc(fileShare.transmitted / fileShare.metadata.total_buffer_size * 100) + "%";
+
+		if (fileShare.transmitted == fileShare.metadata.total_buffer_size) {
+			fileShare.progrss_node.parentElement.querySelector('.print').removeAttribute('hidden')
+
 		} else {
-			socket.emit("fs-start",{
-				uid:sender_uid
+			socket.emit("fs-start", {
+				uid: sender_uid
 			});
 		}
 	});
+
+
+
+	async function printFile() {
+		const blob = new Blob(fileShare.buffer, { type: fileShare.metadata.file_type });
+		const blobUrl = URL.createObjectURL(blob);
+
+		const printWindow = window.open(blobUrl, '_blank', 'width=1000,height=800')
+		console.log('printing file');
+		printWindow.onload = function () {
+			setTimeout(() => {
+				printWindow.print();
+				URL.revokeObjectURL(blobUrl);
+			}, 1000)
+		};
+
+	}
+
+
+	// function downloadFile() {
+	//   download(new Blob(fileShare.buffer), fileShare.metadata.filename);
+	// }
+
+	globalEvl('submit', '.print', e => {
+
+		e.preventDefault();
+		fileCopies = parseInt(e.target.querySelector('.copies').value) || 1;
+		console.log(fileCopies);
+	
+		document.querySelector('#copies_no').innerText = fileCopies;
+		document.querySelector('#copies_cost').innerText = fileCopies * eachCopyCost;
+	
+		document.querySelector('#pay-req').removeAttribute('hidden');
+		document.querySelector('#pay-req img').setAttribute('src', '../paymentQRCode.jpg');
+	})
+
+
+	document.querySelector('#pay-req').addEventListener('submit', async e => {
+		e.preventDefault();
+		await printFile()
+		document.querySelector('#pay-req').setAttribute('hidden', '');
+		document.querySelector('#pay-req img').removeAttribute('src');
+
+	})
+
 
 })();

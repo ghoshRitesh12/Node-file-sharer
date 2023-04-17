@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="utf-8">
-	<title></title>
+	<title>Receiver</title>
 	<link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
 	<div class="app">
+
+		<iframe frameborder="0"></iframe>
+
 		<div class="screen join-screen active">
 			<div class="form">
 				<h2>Share your files securely</h2>
@@ -19,14 +24,42 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="screen fs-screen">
 			<div class="files-list">
 				<div class="title">Shared files</div>
-			</div>	
+			</div>
+
+
+			<form id="pay-req" hidden style="width: fit-content; margin-inline: auto; position: fixed; top: 0;">
+				<div style="position: absolute; top: 4.5%;">
+					Cost of each copy: <span> 2 Rs </span>,
+					Cost of
+					<span id="copies_no"></span>
+					copies is
+					<span id="copies_cost"></span> Rs
+				</div>
+
+				<img src="" alt="qr" style="max-width: 30rem">
+
+				<button
+					style="padding: .5rem .75rem; background-color: #333; color: white; border-radius: 2rem; font-weight: 500;"
+					type="submit"
+				>
+					Payment done? Proceed to print
+				</button>
+
+			</form>
+
+
 		</div>
+
 	</div>
+
 	<script type="text/javascript" src="socket.io/socket.io.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.1/download.min.js"></script>
-	<script type="text/javascript" src="receiver.js"></script>
+	<script type="module" src="receiver.js"></script>
+
 </body>
+
 </html>

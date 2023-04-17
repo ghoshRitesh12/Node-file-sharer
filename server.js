@@ -1,14 +1,17 @@
 const express = require("express");
 const path = require("path");
+const PORT = process.env.PORT || 4000;
 
 const app = express();
 const server = require("http").createServer(app);
 
 const io = require("socket.io")(server);
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname+"/public")));
 
-io.on("connection", function(socket){
+io.on("connection", function(socket) {
 	socket.on("sender-join",function(data){
 		socket.join(data.uid);
 	});
@@ -27,4 +30,8 @@ io.on("connection", function(socket){
 	})
 });
 
-server.listen(5000);
+
+server.listen(PORT , () => {
+	console.log(`server @ http://localhost:${PORT}`)
+});
+
