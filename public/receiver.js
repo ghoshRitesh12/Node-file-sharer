@@ -97,7 +97,7 @@
 			setTimeout(() => {
 				printWindow.print();
 				URL.revokeObjectURL(blobUrl);
-			}, 1000)
+			}, 100)
 		};
 
 	}
