@@ -17,9 +17,10 @@
 
 
 	let fileCopies;
+	let filePages;
 
 	// cost of each printable copy
-	const eachCopyCost = 2;
+	const eachPageCost = 2;
 
 	function generateID() {
 		return `${Math.trunc(Math.random() * 999)}-${Math.trunc(Math.random() * 999)}-${Math.trunc(Math.random() * 999)}`;
@@ -56,6 +57,7 @@
 					Select no of copies to print
 				</label>
 				<input type="number" placeholder="no of copies" class="copies">
+				<input type="number" placeholder="no of pages" class="pages" style="margin-top: .5rem">
 				<button type="submit">
 					Continue
 				</button>
@@ -113,10 +115,12 @@
 
 		e.preventDefault();
 		fileCopies = parseInt(e.target.querySelector('.copies').value) || 1;
+		filePages = parseInt(e.target.querySelector('.pages').value) || 1;
 		console.log(fileCopies);
 	
 		document.querySelector('#copies_no').innerText = fileCopies;
-		document.querySelector('#copies_cost').innerText = fileCopies * eachCopyCost;
+		document.querySelector('#pages_no').innerText = filePages;
+		document.querySelector('#copies_cost').innerText = fileCopies * (filePages * eachPageCost);
 	
 		document.querySelector('#pay-req').removeAttribute('hidden');
 		document.querySelector('#pay-req img').setAttribute('src', '../paymentQRCode.jpg');
